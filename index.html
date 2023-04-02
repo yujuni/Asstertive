@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <title>To-do List</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</head>
+
+<body>
+    <div id="container" class="animate__animated animate__jackInTheBox">
+        <div id="refresh-btn">
+            <i class="fa-solid fa-2xl fa-arrows-rotate"></i>
+        </div>
+        <form id="todo-form">
+            <input type="text" placeholder="To-do" required />
+            <button id="check-btn">
+                <i class="fa-solid fa-check" style="color: blue"></i>
+            </button>
+        </form>
+        <ul id="todo-list"></ul>
+    </div>
+    <script src="index.js"></script>
+    <script src="background.js"></script>
+</body>
+
+</html>
