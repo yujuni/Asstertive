@@ -5,6 +5,9 @@ const todoList = document.querySelector('ul#todo-list');
 let todos = [];
 const TODOS = 'todos';
 
+const SELECTED = 'selected';
+const STARED = 'stared';
+
 /**
  * 브라우저 - 로컬 스토리지에 todos 리스트를 저장하는 함수.
  */
@@ -40,17 +43,32 @@ function removeTodo(event) {
 function drawTodo(newTodo) {
     const li = document.createElement('li');
     const span = document.createElement('span');
+    const starBtn = document.createElement('div');
+    const starIcon = document.createElement('i');
     const deleteBtn = document.createElement('div');
     const deleteIcon = document.createElement('i');
 
+    li.className = newTodo.class;
     li.id = newTodo.id;
     span.innerText = newTodo.text;
     deleteIcon.className = 'fa-solid fa-trash';
+    starIcon.className = 'fa-solid fa-star';
 
+    if ((li.className).includes(SELECTED)) {
+        li.classList.add(SELECTED);
+        starBtn.classList.add(STARED);
+        todoList.prepend(li);
+    }
+    else {
+        todoList.appendChild(li);
+    }
+
+    starBtn.appendChild(starIcon);
     deleteBtn.appendChild(deleteIcon);
-    li.append(span, deleteBtn);
-    todoList.appendChild(li);
+    li.append(starBtn, span, deleteBtn);
 
+
+    starBtn.addEventListener('click', starTodo);
     deleteBtn.addEventListener('click', removeTodo);
 }
 
@@ -65,6 +83,7 @@ function handleSubmit(event) {
     todoInput.value = "";
     const newTodo = {
         id: Date.now(),
+        class: 'list',
         text: todo,
     }
     drawTodo(newTodo);
@@ -77,8 +96,60 @@ todoForm.addEventListener('submit', handleSubmit);
 const savedTodos = localStorage.getItem(TODOS);
 
 if (savedTodos !== null) {
-    todos = JSON.parse(savedTodos);
+    let savedData = JSON.parse(savedTodos);
+    const selected = savedData.filter(object => (object.class).includes(SELECTED));
+    const others = savedData.filter(object => !(object.class).includes(SELECTED));
+
+    savedData = [...selected, ...others];
+    todos = savedData;
     todos.forEach(item => {
         drawTodo(item);
     });
+}
+
+function starTodo(event) {
+    const star = event.currentTarget;
+    const list = event.currentTarget.parentElement;
+    const listID = list.id;
+
+    if ((list.className).includes('selected')) {
+        list.classList.remove(SELECTED);
+        todos.forEach(object => {
+            switch (object.id === parseInt(listID)) {
+                case true:
+                    object.class = 'list';
+                    break;
+                case false:
+                    break;
+            }
+        });
+        star.classList.remove(STARED);
+    }
+    else {
+        list.classList.add(SELECTED);
+        todos.forEach(object => {
+            switch (object.id === parseInt(listID)) {
+                case true:
+                    object.class = 'list selected';
+                    break;
+                case false:
+                    break;
+            }
+        });
+        star.classList.add(STARED);
+    }
+
+    const selected = todos.filter(object => (object.class).includes('selected'));
+
+    if (selected.length > 0) {
+        const others = todos.filter(object => !(object.class).includes('selected'));
+        todos = [...selected, ...others];
+
+        selected.forEach(item => {
+            const removes = document.getElementById(item.id);
+            todoList.removeChild(removes);
+            drawTodo(item);
+        });
+    }
+    saveTodos();
 }
